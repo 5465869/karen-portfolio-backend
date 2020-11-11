@@ -33,7 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 app.get('/', (req, res) => res.render('pages/index'))
-app.post('/upload', upload.single('photo'), (req, res) => {
+app.post('/upload', upload.single('photo'), async (req, res) => {
   if(req.file) {
       res.json(req.file);
       console.log(req.body.email);
