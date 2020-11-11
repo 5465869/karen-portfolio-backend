@@ -38,7 +38,7 @@ app.post('/upload', upload.single('photo'), (req, res) => {
       res.json(req.file);
       console.log(req.body.email);
       const client = await pool.connect();
-      const result = await client.query(`INSERT INTO test_table (image_title,image_size,image_path) VALUES (${req.body.title},${req.body.size},${req.file.path})`);
+      const result = await client.query(`INSERT INTO images (image_title,image_size,image_path) VALUES (${req.body.title},${req.body.size},${req.file.path})`);
   }
   else throw 'error';
 });
