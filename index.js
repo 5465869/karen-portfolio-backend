@@ -2,7 +2,6 @@ const express = require('express')
 const path = require('path')
 const cors = require('cors')
 const multer = require('multer');
-const path = require('path');
 const helpers = require('./helpers');
 const PORT = process.env.PORT || 5000
 
