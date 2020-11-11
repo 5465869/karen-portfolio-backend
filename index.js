@@ -33,15 +33,15 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 app.get('/', (req, res) => res.render('pages/index'))
-app.post('/upload', upload.single('photo'), (req, res) => {
-  if(req.file) {
-      res.json(req.file);
-      console.log(req.body.email);
-      const client = await pool.connect();
-      const result = await client.query(`INSERT INTO images (image_title,image_size,image_path) VALUES (${req.body.title},${req.body.size},${req.file.path})`);
-  }
-  else throw 'error';
-});
+//app.post('/upload', upload.single('photo'), (req, res) => {
+  //if(req.file) {
+    //  res.json(req.file);
+      //console.log(req.body.email);
+      //const client = await pool.connect();
+      //const result = await client.query(`INSERT INTO images (image_title,image_size,image_path) VALUES (${req.body.title},${req.body.size},${req.file.path})`);
+  //}
+  //else throw 'error';
+//});
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
 
