@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 5000
 
 let storage = multer.diskStorage({
   destination: function(req, file, cb) {
-      cb(null, '/uploads/images');
+      cb(null, path.join(__dirname, 'uploads/images'));
    },
   filename: function (req, file, cb) {
       cb(null , file.originalname);
