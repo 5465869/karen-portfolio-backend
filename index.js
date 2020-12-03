@@ -63,9 +63,15 @@ app.post("/upload", (req, res) => {
   try {
     const form = formidable({ multiples: true });
     form.parse(req, async (_, fields, files) => {
+      console.log(fields);
       if (files) {
         console.log(files);
-        const image = await cloudinary.uploader.upload(files.photo.path, function(result) { console.log(result) });
+        const image = await cloudinary.uploader.upload(files.photo.path, {
+          public_id: fields.title
+        }, function(error,result) { console.log(result, error) });
+        const client = await pool.connect();
+        const result = await client.query(`INSERT INTO images (image_title,image_size,image_path) VALUES (${fields.title},${fields.size},${image.secure_url})`);
+        client.release();
         console.log("img uploaded", image.secure_url);
         return res.json({ image: image.secure_url });
       }
