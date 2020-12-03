@@ -12,9 +12,16 @@ cloudinary.config({
 });
 
 
+let storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+      cb(null, 'public/uploads');
+   },
+  filename: function (req, file, cb) {
+      cb(null , file.originalname);
+  }
+});
 
-
-
+const upload = multer({ storage: storage })
 
 const { Pool } = require('pg');
 const pool = new Pool({
@@ -32,38 +39,26 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 app.get('/', (req, res) => res.render('pages/index'))
-app.post('/upload', async (req, res) => {
-  if(req.file) {
+app.post('/upload', upload.single('photo'), async (req, res) => {
+  
       res.json(req.file);
       
-      try {
-        const fileUpload = await cloudinary.uploader.upload(req.file,
-          function(result) { console.log(result) });
-        const client = await pool.connect();
-        const result = await client.query(`INSERT INTO images (image_title,image_size,image_path) VALUES (${req.body.title},${req.body.size},${req.file.path})`);
-        client.release();
-      } catch (err) {
-        console.error(err);
-        res.send("Error " + err);
-      }
+      console.log(req.file);
+      cloudinary.uploader.upload(`public/uploads/${req.file.filename}`, function(result) { console.log(result) });
+      const client = await pool.connect();
+      const result = await client.query(`INSERT INTO images (image_title,image_size,image_path) VALUES (${req.body.title},${req.body.size},${req.file.path})`);
+      client.release();
+     
+      console.error(err);
+
       
-  }
-  else throw 'error';
+  
+  
 });
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
 
-app.get('/db', async (req, res) => {
-  try {
-    const client = await pool.connect();
-    const result = await client.query('SELECT * FROM test_table');
-    res.send(result);
-    client.release();
-  } catch (err) {
-    console.error(err);
-    res.send("Error " + err);
-  }
-})
+
 //testing....
 
 
