@@ -44,7 +44,7 @@ app.post('/upload', upload.single('photo'), async (req, res) => {
       res.json(req.file);
       
       console.log(req.file);
-      cloudinary.uploader.upload(`public/uploads/${req.file.filename}`, function(result) { console.log(result) });
+      cloudinary.uploader.upload(req.file.filename, function(result) { console.log(result) });
       const client = await pool.connect();
       const result = await client.query(`INSERT INTO images (image_title,image_size,image_path) VALUES (${req.body.title},${req.body.size},${req.file.path})`);
       client.release();
