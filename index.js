@@ -70,6 +70,7 @@ app.post("/upload", (req, res) => {
           public_id: fields.title
         }, function(error,result) { console.log(result, error) });
         const client = await pool.connect();
+        console.log(client);
         const result = await client.query(`INSERT INTO images (image_title,image_size,image_path) VALUES (${fields.title},${fields.size},${image.secure_url})`);
         client.release();
         console.log("img uploaded", image.secure_url);
