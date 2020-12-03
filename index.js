@@ -4,6 +4,9 @@ const cors = require('cors')
 const multer = require('multer');
 const PORT = process.env.PORT || 5000
 const cloudinary = require('cloudinary')
+const formidable = require('formidable'),
+    http = require('http'),
+    util = require('util');
 
 cloudinary.config({ 
   cloud_name: 'hm408jhub', 
@@ -39,11 +42,11 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 app.get('/', (req, res) => res.render('pages/index'))
-app.post('/upload', upload.single('photo'), async (req, res) => {
+/*app.post('/upload',  async (req, res) => {
   
-      res.json(req.file);
-      
-      console.log(req.file);
+      console.log(res.json(req.file));
+      console.log(req.body.data);
+      console.log(req.files);
       cloudinary.uploader.upload(req.file.filename, function(result) { console.log(result) });
       const client = await pool.connect();
       const result = await client.query(`INSERT INTO images (image_title,image_size,image_path) VALUES (${req.body.title},${req.body.size},${req.file.path})`);
@@ -54,7 +57,24 @@ app.post('/upload', upload.single('photo'), async (req, res) => {
       
   
   
+});*/
+
+app.post("/upload", (req, res) => {
+  try {
+    const form = formidable({ multiples: true });
+    form.parse(req, async (_, fields, files) => {
+      if (files) {
+        console.log(files);
+        const image = await cloudinary.uploader.upload(files.photo.path, function(result) { console.log(result) });
+        console.log("img uploaded", image.secure_url);
+        return res.json({ image: image.secure_url });
+      }
+    });
+  } catch (err) {
+    return res.json(err);
+  }
 });
+
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
 
